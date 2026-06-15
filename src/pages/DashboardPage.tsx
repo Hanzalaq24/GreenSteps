@@ -1,10 +1,16 @@
-import { ArrowLeft, TrendingDown, Target, Zap, Car, Utensils, ShoppingBag, AlertCircle } from 'lucide-react';
-import { CarbonBreakdown } from '../types';
-import { getCarbonScore, getScoreMessage, getBiggestPolluter, getPolluterPercentage, getRegionComparison } from '../utils/carbonCalc';
+import { useState } from 'react';
+import { AssessmentAnswers, CarbonBreakdown, HistoricalEntry } from '../types';
+import { getCarbonScore, getScoreMessage, getBiggestPolluter, getPolluterPercentage, getRegionComparison, generatePersonalizedInsights } from '../utils/carbonCalc';
 import AnimatedCounter from '../components/AnimatedCounter';
+import CarbonSimulator from '../components/CarbonSimulator';
+import HistoricalChart from '../components/HistoricalChart';
+import PersonalizedInsights from '../components/PersonalizedInsights';
+import { ArrowLeft, TrendingDown, Target, Zap, Car, Utensils, ShoppingBag, AlertCircle } from 'lucide-react';
 
 interface DashboardPageProps {
   footprint: CarbonBreakdown;
+  answers: AssessmentAnswers;
+  history: HistoricalEntry[];
   setPage: (p: string) => void;
 }
 
@@ -103,7 +109,7 @@ function HorizontalBar({ label, value, maxValue, color, icon }: { label: string;
   );
 }
 
-export default function DashboardPage({ footprint, setPage }: DashboardPageProps) {
+export default function DashboardPage({ footprint, answers, history, setPage }: DashboardPageProps) {
   const score = getCarbonScore(footprint);
   const message = getScoreMessage(score);
   const regionComparison = getRegionComparison(footprint);
@@ -112,6 +118,15 @@ export default function DashboardPage({ footprint, setPage }: DashboardPageProps
   const target = Math.round(footprint.total * 0.8);
   const reductionNeeded = footprint.total - target;
   const reductionPercent = Math.round((reductionNeeded / footprint.total) * 100);
+  const insights = generatePersonalizedInsights(footprint, answers, history);
+
+  const [projectedFootprint, setProjectedFootprint] = useState<CarbonBreakdown | null>(null);
+  const [totalSavings, setTotalSavings] = useState(0);
+
+  const handleProjectionChange = (projected: CarbonBreakdown, savings: number) => {
+    setProjectedFootprint(projected);
+    setTotalSavings(savings);
+  };
 
   const chartSegments = [
     { value: percentages.transportation, color: '#3B82F6', label: 'Transport' },
@@ -147,7 +162,6 @@ export default function DashboardPage({ footprint, setPage }: DashboardPageProps
         </div>
 
         {/* Score Card */}
-        <div className="bg-gradient-to-br " style={{}} />
         <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${scoreBg} p-8 sm:p-10 text-white mb-8 shadow-2xl`}>
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-20 w-48 h-48 bg-white/10 rounded-full translate-y-1/2" />
@@ -256,6 +270,50 @@ export default function DashboardPage({ footprint, setPage }: DashboardPageProps
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Carbon Reduction Simulator */}
+        <div className="mb-8">
+          <CarbonSimulator
+            footprint={footprint}
+            answers={answers}
+            onProjectionChange={handleProjectionChange}
+          />
+        </div>
+
+        {/* Projection Comparison */}
+        {projectedFootprint && totalSavings > 0 && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-lg shadow-gray-100/50 p-6 mb-8">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              🌳 Your Green Journey Projection
+            </h3>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="text-center p-4 bg-gray-50 rounded-xl">
+                <div className="text-sm text-gray-500 mb-1">Current Monthly</div>
+                <div className="text-2xl font-bold text-gray-900">{Math.round(footprint.total)}kg</div>
+                <div className="text-xs text-gray-400">CO₂ per month</div>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-xl">
+                <div className="text-sm text-gray-500 mb-1">Projected Monthly</div>
+                <div className="text-2xl font-bold text-green-600">{Math.round(projectedFootprint.total)}kg</div>
+                <div className="text-xs text-gray-400">CO₂ per month</div>
+              </div>
+            </div>
+            <div className="text-center text-sm text-gray-600">
+              Implementing these changes for a year saves <span className="text-green-600 font-bold">{Math.round(totalSavings * 12)}kg CO₂</span> — 
+              equivalent to planting <span className="text-green-600 font-bold">{Math.round(totalSavings * 12 / 22)} trees</span> 🌳
+            </div>
+          </div>
+        )}
+
+        {/* Historical Trend */}
+        <div className="mb-8">
+          <HistoricalChart currentFootprint={footprint.total} />
+        </div>
+
+        {/* Personalized Insights */}
+        <div className="mb-8">
+          <PersonalizedInsights insights={insights} />
         </div>
 
         {/* CTA */}

@@ -30,3 +30,36 @@ export interface ActionItem {
   savings: string;
   difficulty: 'easy' | 'medium' | 'hard';
 }
+
+export interface SimulationScenario {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: 'transportation' | 'electricity' | 'food' | 'shopping';
+  reductionPercent: number;
+  currentEmissions: number;
+  projectedEmissions: number;
+  monthlySavings: number;
+  annualSavings: number;
+}
+
+export interface HistoricalEntry {
+  date: string;
+  month: string;
+  year: number;
+  monthIndex: number;
+  answers: AssessmentAnswers;
+  footprint: CarbonBreakdown;
+  score: number;
+}
+
+export interface PersonalizedInsight {
+  id: string;
+  type: 'warning' | 'tip' | 'achievement' | 'projection';
+  title: string;
+  description: string;
+  impact: 'high' | 'medium' | 'low';
+  category: string;
+  actionable: boolean;
+}

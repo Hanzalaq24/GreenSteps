@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { AssessmentAnswers, CarbonBreakdown, ActionItem } from './types';
-import { calculateCarbonFootprint, generateActionPlan } from './utils/carbonCalc';
+import { AssessmentAnswers, CarbonBreakdown, ActionItem, HistoricalEntry } from './types';
+import { calculateCarbonFootprint, generateActionPlan, saveHistoricalEntry, getHistoricalData } from './utils/carbonCalc';
 import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import AssessmentPage from './pages/AssessmentPage';
@@ -11,27 +11,34 @@ export default function App() {
   const [page, setPage] = useState('home');
   const [footprint, setFootprint] = useState<CarbonBreakdown | null>(null);
   const [actions, setActions] = useState<ActionItem[]>([]);
+  const [answers, setAnswers] = useState<AssessmentAnswers | null>(null);
+  const [history, setHistory] = useState<HistoricalEntry[]>([]);
+
   // Load saved data
   useEffect(() => {
     const saved = localStorage.getItem('greensteps-answers');
     if (saved) {
-      const answers = JSON.parse(saved) as AssessmentAnswers;
-      const fp = calculateCarbonFootprint(answers);
+      const parsed = JSON.parse(saved) as AssessmentAnswers;
+      const fp = calculateCarbonFootprint(parsed);
       setFootprint(fp);
-      setActions(generateActionPlan(answers));
+      setActions(generateActionPlan(parsed));
+      setAnswers(parsed);
     }
+    setHistory(getHistoricalData());
   }, []);
 
-  const handleAssessmentComplete = (answers: AssessmentAnswers) => {
-    const fp = calculateCarbonFootprint(answers);
-    const actionItems = generateActionPlan(answers);
+  const handleAssessmentComplete = (newAnswers: AssessmentAnswers) => {
+    const fp = calculateCarbonFootprint(newAnswers);
+    const actionItems = generateActionPlan(newAnswers);
     setFootprint(fp);
     setActions(actionItems);
-    localStorage.setItem('greensteps-answers', JSON.stringify(answers));
+    setAnswers(newAnswers);
+    localStorage.setItem('greensteps-answers', JSON.stringify(newAnswers));
+    saveHistoricalEntry(newAnswers, fp);
+    setHistory(getHistoricalData());
     setPage('dashboard');
   };
 
-  // For the demo, show a pre-computed dashboard
   const getDemoFootprint = (): CarbonBreakdown => {
     if (footprint) return footprint;
     return {
@@ -43,14 +50,20 @@ export default function App() {
     };
   };
 
+  const getDemoAnswers = (): AssessmentAnswers => {
+    if (answers) return answers;
+    return {
+      travelDistance: 15,
+      vehicleType: 'car_petrol',
+      electricityBill: 2000,
+      foodPreference: 'veg',
+      shoppingFrequency: 'monthly'
+    };
+  };
+
   const demoFootprint = getDemoFootprint();
-  const demoActions = actions.length > 0 ? actions : generateActionPlan({
-    travelDistance: 15,
-    vehicleType: 'car_petrol',
-    electricityBill: 2000,
-    foodPreference: 'veg',
-    shoppingFrequency: 'monthly'
-  });
+  const demoAnswers = getDemoAnswers();
+  const demoActions = actions.length > 0 ? actions : generateActionPlan(demoAnswers);
 
   return (
     <div className="min-h-screen bg-white">
@@ -60,7 +73,14 @@ export default function App() {
       {page === 'assessment' && (
         <AssessmentPage onComplete={handleAssessmentComplete} setPage={setPage} />
       )}
-      {page === 'dashboard' && <DashboardPage footprint={demoFootprint} setPage={setPage} />}
+      {page === 'dashboard' && (
+        <DashboardPage
+          footprint={demoFootprint}
+          answers={demoAnswers}
+          history={history}
+          setPage={setPage}
+        />
+      )}
       {page === 'actionplan' && <ActionPlanPage actions={demoActions} setPage={setPage} />}
     </div>
   );
