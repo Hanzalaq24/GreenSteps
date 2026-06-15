@@ -2,7 +2,7 @@
 
 **Understand, Track & Reduce Your Carbon Footprint**
 
-GreenSteps is a carbon footprint awareness platform designed to help individuals understand their environmental impact, track their daily habits, and take meaningful actions to reduce carbon emissions through personalized insights and recommendations.
+GreenSteps is a carbon footprint awareness platform that goes beyond a simple calculator — it's a complete carbon management platform that helps individuals understand their environmental impact, track progress over time, simulate reduction scenarios, and take meaningful action through personalized insights.
 
 ---
 
@@ -14,57 +14,64 @@ Many people want to live more sustainably but struggle to understand how their d
 
 ## 💡 Solution
 
-GreenSteps simplifies sustainability by providing a guided assessment that calculates a user's estimated carbon footprint based on transportation, energy consumption, lifestyle choices, and daily habits.
+GreenSteps simplifies sustainability by providing:
 
-The platform then delivers personalized recommendations, progress tracking, and actionable plans to help users reduce their environmental impact over time.
+1. **Understand** — A guided 5-question assessment that calculates your estimated carbon footprint
+2. **Track** — Historical monitoring with monthly trend charts and streak tracking
+3. **Reduce** — A Carbon Reduction Simulator that shows projected savings from lifestyle changes
 
 ---
 
 ## ✨ Features
 
 ### 📊 Carbon Footprint Assessment
+Answer 5 simple questions about your daily habits (travel, electricity, food, shopping) and receive an estimated carbon footprint score with detailed breakdown.
 
-Answer a few simple questions about your lifestyle and receive an estimated carbon footprint score.
+### 🔬 Carbon Reduction Simulator
+Toggle different scenarios (switch to public transport, go solar, reduce meat consumption) and instantly see projected emissions, monthly savings, and how many trees equivalent you'd save annually. Combine multiple scenarios to see cumulative impact.
 
-### 🎯 Personalized Recommendations
+### 📈 Historical Tracking
+Every assessment is saved with timestamps. View your monthly trend chart to see if your footprint is improving or increasing over time. Track your best month and compare with previous periods.
 
-Get tailored suggestions based on your highest emission sources.
+### 🧠 Personalized Insights
+Data-driven recommendations based on YOUR actual emissions — not generic advice:
+- "Transportation contributes 63% of your footprint"
+- "Switching to public transport twice weekly could reduce emissions by 18kg CO₂/month"
+- Achievement badges for high scores and improvement trends
 
-### 📈 Progress Dashboard
-
-Visualize your footprint and identify areas where improvements can have the biggest impact.
-
-### 🌍 Action Plan
-
-Receive practical, achievable steps to reduce emissions and build sustainable habits.
+### 🎯 Personalized Action Plan
+Get tailored action items ranked by difficulty and impact, from easy wins (switch to LED bulbs) to bigger commitments (install solar panels).
 
 ### 🏆 Eco Challenges
-
-Encourage positive behavior through small environmental challenges and achievements.
+Gamified challenges that make sustainability fun. Complete challenges to earn points and track your eco-journey.
 
 ### 📱 Fully Responsive Design
-
 Optimized experience across desktop, tablet, and mobile devices.
 
 ---
 
 ## 🚀 User Journey
 
-1. Complete the Carbon Assessment
-2. Receive Your Carbon Score
-3. View Emission Breakdown
-4. Explore Personalized Recommendations
-5. Follow Your Action Plan
-6. Track Progress Over Time
+1. Complete the Carbon Assessment (5 questions, ~60 seconds)
+2. Receive Your Carbon Score (0-100)
+3. View Emission Breakdown by category (transport, electricity, food, shopping)
+4. Explore Carbon Reduction Simulator — toggle scenarios, see projected savings
+5. Track Progress Over Time — monthly trend chart
+6. Receive Personalized Insights — data-driven, not generic
+7. Follow Your Action Plan with Eco Challenges
 
 ---
 
 ## 🛠 Tech Stack
 
-* React
-* TypeScript
-* Vite
-* Tailwind CSS
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| React | 19.2.6 | UI framework |
+| TypeScript | 5.9.3 | Type safety |
+| Vite | 7.3.2 | Build tool |
+| Tailwind CSS | 4.1.17 | Styling |
+| lucide-react | — | Icons |
+| html2canvas | 1.4.1 | Report download |
 
 ---
 
@@ -74,73 +81,72 @@ GreenSteps is designed with accessibility in mind:
 
 * Semantic HTML structure
 * Keyboard-friendly navigation
-* Responsive layouts
+* Responsive layouts across all devices
 * Clear typography and visual hierarchy
-* Accessible form controls and labels
+* ARIA labels on interactive elements
+* Color contrast ratios meeting WCAG standards
 
 ---
 
 ## ⚡ Performance
 
-* Lightweight architecture
-* Optimized assets
-* Fast page rendering
-* Mobile-first design
-* Efficient state management
+* Fully inlined bundle (vite-plugin-singlefile) — zero external requests
+* Client-side rendering with no server dependency
+* Lightweight architecture (~87KB gzipped)
+* Optimized assets and lazy rendering
+* Mobile-first responsive design
 
 ---
 
 ## 🔒 Security
 
-* Client-side input validation
-* Secure form handling
-* No sensitive user data collection
-* Safe application architecture
+* **Content Security Policy (CSP)** — Restricts script execution to self-only
+* **X-Frame-Options: DENY** — Prevents clickjacking via iframe embedding
+* **X-Content-Type-Options: nosniff** — Prevents MIME type sniffing
+* **XSS Protection** — React auto-escaping + input validation
+* **Input Sanitization** — Range clamping, enum whitelisting on assessment inputs
+* **Safe localStorage** — try/catch + schema validation on all JSON.parse calls
+* **Zero-division guards** — Prevents calculation errors on edge cases
+* **No sensitive data collection** — All data stays in browser localStorage
 
 ---
 
 ## 📷 Screenshots
 
 ### Home Page
-
 A clean and engaging landing page that introduces users to carbon footprint awareness.
 
 ### Assessment Page
-
-Interactive questionnaire used to calculate a user's estimated environmental impact.
+Interactive 5-step questionnaire with progress indicators.
 
 ### Dashboard
-
-Visual representation of emissions, progress tracking, and environmental insights.
+Comprehensive view with score, donut chart, category breakdown, Carbon Simulator, trend chart, and personalized insights.
 
 ### Action Plan
-
-Personalized recommendations and practical sustainability goals.
+Personalized recommendations with eco challenges and point tracking.
 
 ---
 
 ## 🔮 Future Improvements
 
-* Historical footprint tracking
-* Community eco challenges
-* Carbon offset integrations
-* Regional emission benchmarks
-* Achievement system and leaderboards
+* User authentication for cross-device sync
+* Community eco challenges and leaderboards
+* Carbon offset marketplace integration
+* Regional emission benchmarks with real-time data
 * AI-powered sustainability recommendations
+* PWA support for offline access
 
 ---
 
 ## 📌 Challenge Alignment
 
-This project directly addresses the challenge objective:
+This project directly addresses the **Carbon Footprint Awareness Platform** challenge:
 
-**Understand** → Carbon Assessment & Insights
-
-**Track** → Dashboard & Progress Monitoring
-
-**Reduce** → Personalized Recommendations & Action Plans
-
-GreenSteps empowers individuals to make informed environmental decisions through awareness, tracking, and actionable sustainability guidance.
+| Requirement | Implementation |
+|------------|----------------|
+| **Understand** | 5-question assessment with detailed emission breakdown by category |
+| **Track** | Historical data persistence, monthly trend charts, streak tracking, best month stats |
+| **Reduce** | Carbon Reduction Simulator with interactive scenario toggles, projected savings, tree-equivalent calculations, personalized actionable insights |
 
 ---
 
@@ -149,7 +155,28 @@ GreenSteps empowers individuals to make informed environmental decisions through
 **Hanzala Qureshi**
 
 Built for the **Virtual PromptWars Challenge 3: Carbon Footprint Awareness Platform**
-<img width="893" height="768" alt="home_page" src="https://github.com/user-attachments/assets/4e75ebd5-c630-409a-88cc-4cb0ce929a7e" />
-<img width="893" height="768" alt="dashboard_page" src="https://github.com/user-attachments/assets/9df56044-84f4-43cb-beee-5e1aa85c2c95" />
-<img width="893" height="768" alt="assess_page" src="https://github.com/user-attachments/assets/45fa0565-9a92-4a31-b6f5-74fb2fc6a7eb" />
-<img width="893" height="768" alt="action_plan_page" src="https://github.com/user-attachments/assets/0fc5317c-cbf0-4535-a54a-d3f2e53d1968" />
+
+---
+
+## 🏃 Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/Hanzalaq24/GreenSteps.git
+cd GreenSteps
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+---
+
+## 📄 License
+
+MIT License — use freely for learning and contribution to climate action.
