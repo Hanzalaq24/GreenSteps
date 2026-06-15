@@ -15,18 +15,32 @@ export default function ActionPlanPage({ actions, setPage }: ActionPlanPageProps
   const [celebratingId, setCelebratingId] = useState<string | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('greensteps-challenges');
-    if (saved) {
-      const parsed = JSON.parse(saved) as EcoChallenge[];
-      setChallenges(parsed);
-    } else {
+    try {
+      const saved = localStorage.getItem('greensteps-challenges');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setChallenges(parsed);
+        } else {
+          setChallenges(getDefaultChallenges());
+        }
+      } else {
+        setChallenges(getDefaultChallenges());
+      }
+    } catch {
       setChallenges(getDefaultChallenges());
     }
 
-    const savedCompleted = localStorage.getItem('greensteps-completed');
-    if (savedCompleted) {
-      const parsed = JSON.parse(savedCompleted) as string[];
-      setCompletedChallenges(parsed);
+    try {
+      const savedCompleted = localStorage.getItem('greensteps-completed');
+      if (savedCompleted) {
+        const parsed = JSON.parse(savedCompleted);
+        if (Array.isArray(parsed)) {
+          setCompletedChallenges(parsed);
+        }
+      }
+    } catch {
+      // Corrupted data — ignore
     }
   }, []);
 

@@ -37,7 +37,22 @@ export default function AssessmentPage({
     }
   };
 
+  const VALID_VEHICLE_TYPES = ['walk', 'cycle', 'public', 'auto', 'bike', 'car_petrol', 'car_diesel', 'car_ev'];
+  const VALID_FOOD_PREFS = ['vegan', 'veg', 'omnivore', 'non_veg'];
+  const VALID_SHOPPING_FREQ = ['rare', 'monthly', 'weekly', 'daily'];
+
   const updateAnswer = (key: string, value: string | number) => {
+    if (key === 'travelDistance') {
+      value = Math.max(0, Math.min(50, Math.round(Number(value) || 0)));
+    } else if (key === 'electricityBill') {
+      value = Math.max(500, Math.min(10000, Math.round(Number(value) || 500)));
+    } else if (key === 'vehicleType' && !VALID_VEHICLE_TYPES.includes(value as string)) {
+      return;
+    } else if (key === 'foodPreference' && !VALID_FOOD_PREFS.includes(value as string)) {
+      return;
+    } else if (key === 'shoppingFrequency' && !VALID_SHOPPING_FREQ.includes(value as string)) {
+      return;
+    }
     setAnswers({ ...answers, [key]: value });
   };
 

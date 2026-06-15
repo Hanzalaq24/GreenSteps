@@ -16,15 +16,21 @@ export default function App() {
 
   // Load saved data
   useEffect(() => {
-    const saved = localStorage.getItem('greensteps-answers');
-    if (saved) {
-      const parsed = JSON.parse(saved) as AssessmentAnswers;
-      const fp = calculateCarbonFootprint(parsed);
-      setFootprint(fp);
-      setActions(generateActionPlan(parsed));
-      setAnswers(parsed);
+    try {
+      const saved = localStorage.getItem('greensteps-answers');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && typeof parsed.travelDistance === 'number') {
+          const fp = calculateCarbonFootprint(parsed);
+          setFootprint(fp);
+          setActions(generateActionPlan(parsed));
+          setAnswers(parsed);
+        }
+      }
+      setHistory(getHistoricalData());
+    } catch {
+      // Corrupted localStorage data — ignore gracefully
     }
-    setHistory(getHistoricalData());
   }, []);
 
   const handleAssessmentComplete = (newAnswers: AssessmentAnswers) => {

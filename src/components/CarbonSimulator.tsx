@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { SimulationScenario, CarbonBreakdown, AssessmentAnswers } from '../types';
 import { generateSimulationScenarios, calculateCombinedScenario, getCarbonScore } from '../utils/carbonCalc';
 import { Zap, TrendingDown, Check, ArrowRight } from 'lucide-react';
@@ -25,6 +25,8 @@ const categoryLabels: Record<string, string> = {
 
 export default function CarbonSimulator({ footprint, answers, onProjectionChange }: CarbonSimulatorProps) {
   const [activeScenarios, setActiveScenarios] = useState<string[]>([]);
+  const onProjectionRef = useRef(onProjectionChange);
+  onProjectionRef.current = onProjectionChange;
 
   const scenarios = useMemo(() => generateSimulationScenarios(footprint, answers), [footprint, answers]);
 
@@ -35,8 +37,8 @@ export default function CarbonSimulator({ footprint, answers, onProjectionChange
 
   const projectedScore = getCarbonScore(projected);
 
-  React.useEffect(() => {
-    onProjectionChange(projected, totalSavings);
+  useEffect(() => {
+    onProjectionRef.current(projected, totalSavings);
   }, [projected, totalSavings]);
 
   const toggleScenario = (id: string) => {

@@ -86,7 +86,7 @@ export function getBiggestPolluter(footprint: CarbonBreakdown): string {
 }
 
 export function getPolluterPercentage(footprint: CarbonBreakdown): Record<string, number> {
-  const total = footprint.total;
+  const total = footprint.total || 1; // Prevent division by zero
   return {
     transportation: Math.round((footprint.transportation / total) * 100),
     electricity: Math.round((footprint.electricity / total) * 100),
@@ -127,8 +127,16 @@ export function saveHistoricalEntry(answers: AssessmentAnswers, footprint: Carbo
 }
 
 export function getHistoricalData(): HistoricalEntry[] {
-  const saved = localStorage.getItem('greensteps-history');
-  return saved ? JSON.parse(saved) : [];
+  try {
+    const saved = localStorage.getItem('greensteps-history');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+  } catch {
+    // Corrupted data — return empty
+  }
+  return [];
 }
 
 export function getMonthlyTrend(): { month: string; total: number; score: number }[] {
